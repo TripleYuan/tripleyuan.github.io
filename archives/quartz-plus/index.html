@@ -1,0 +1,232 @@
+<!DOCTYPE HTML>
+<html lang="english">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Java,SpringBoot,Yuan,Blog" />
+    <meta name="generator" content="Maverick 1.2.1" />
+    <meta name="template" content="Galileo" />
+    <link rel="alternate" type="application/rss+xml" title="Yuan's Blog &raquo; RSS 2.0" href="/feed/index.xml" />
+    <link rel="alternate" type="application/atom+xml" title="Yuan's Blog &raquo; ATOM 1.0" href="/feed/atom/index.xml" />
+    <link rel="stylesheet" href="/assets/galileo-8d8763e752.css">
+    <link rel="stylesheet" href="/assets/ExSearch/ExSearch-182e5a8868.css">
+    <link rel="stylesheet" href="/assets/katex.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700&display=swap">
+    <script>
+        var ExSearchConfig = {
+            root: "",
+            api: "/3b37dae70056f58112562d74671a2c38.json"
+        }
+    </script>
+    
+<title>Quartz Plus - Yuan's Blog</title>
+<meta name="author" content="wuxiaoyuan" />
+<meta name="description" content="Quartz-Plus是一个Quartz作业调度框架的增强工具，支持以注解方式快速创建Job和Trigger，提供了一套功能完备的可视化的任务调度管理系统。" />
+<meta property="og:title" content="Quartz Plus - Yuan's Blog" />
+<meta property="og:description" content="Quartz-Plus是一个Quartz作业调度框架的增强工具，支持以注解方式快速创建Job和Trigger，提供了一套功能完备的可视化的任务调度管理系统。" />
+<meta property="og:site_name" content="Yuan's Blog" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/archives/quartz-plus/" />
+<meta property="og:image" content="" />
+<meta property="article:published_time" content="2025-03-20T17:51:01+08.00" />
+<meta name="twitter:title" content="Quartz Plus - Yuan's Blog" />
+<meta name="twitter:description" content="Quartz-Plus是一个Quartz作业调度框架的增强工具，支持以注解方式快速创建Job和Trigger，提供了一套功能完备的可视化的任务调度管理系统。" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:image" content="" />
+
+
+    
+    </head>
+    
+    <body>
+        
+        <div class="container">
+            <header id="ga-header">
+                <div first>
+                    <aside id="ga-brand">
+                        <h1 class="brand"><a class="no-style" href="/">Yuan's Blog</a></h1>
+                        <p>Hello, World!</p>
+                    </aside>
+                </div>
+                <div second id="ga-nav">
+                    <nav class="navs">
+                        <ul><li><a class="ga-highlight" href="/" target="_self">Home</a></li><span class="separator">·</span><li><a class="ga-highlight" href="/archives/" target="_self">Archives</a></li><span class="separator">·</span><li><a class="ga-highlight" href="/about/" target="_self">About</a></li><span class="separator">·</span><li><a href="#" target="_self" class="search-form-input ga-highlight">Search</a></li></ul>
+                    </nav>
+                </div>
+            </header>
+            <div class="wrapper">
+                
+<main>    
+    <section class="ga-section ga-content">
+        <article class="yue">
+            <h1 class="ga-post_title">Quartz Plus</h1>
+            <span class="ga-post_meta ga-mono">
+                <span>wuxiaoyuan</span>
+                <time>
+                    2025-03-20
+                </time>
+                
+                in <a no-style class="category" href="/category/Dev/">
+                    Dev
+                </a>
+                
+                
+                <span class="leancloud_visitors" 
+                    id="/archives/quartz-plus/" 
+                    data-flag-title="Quartz Plus"> · <i class="leancloud-visitors-count"></i> Views</span>
+                
+            </span>
+            <div class="ga-content_body">
+                <h1>Quartz Plus</h1>
+<p>在工作中，我经常会使用到 Quartz，一个开源的分布式任务调度框架。然而，尽管 Quartz 提供了强大的功能，我在使用过程中却遇到了一些痛点：</p><ul>
+<li>Quartz 不支持注解的方式定义Job，这导致我们只能通过硬编码的方式创建<code>Job</code>和<code>Trigger</code>，并手动注册到 Quartz scheduler 中。</li>
+<li>​Quartz 未提供任务调度管理界面。在实际工作中，我常常需要手动触发某个Job的执行，然而由于缺少管理页面，我们只能通过修改数据库中 trigger 的执行时间来间接触发 job 的执行，这显然不是一个高效的方式。</li>
+</ul>
+<p>为了解决这些问题，提高开发效率，我基于 Spring 对 Quartz 进行了扩展，开发了一个名为 Quartz Plus 的工具库：</p><ul>
+<li>支持注解的方式快速定义<code>Job</code>和<code>Trigger</code>：使用 @QuartzJob 和 @QuartzTrigger 注解，我们可以快速地定义<code>Job</code>和<code>Trigger</code>，并且它们会自动注册到<code>Quartz Scheduler</code>中。</li>
+<li>实现了一个带有管理界面的 Quartz 任务调度中心：该任务调度中心提供了完整的管理界面，包括 job 管理、Quartz 实例管理、用户管理等功能，使我们能够更方便地管理和监控任务调度。</li>
+</ul>
+<p>项目源码地址：<a href="https://github.com/TripleYuan/quartz-plus.git">https://github.com/TripleYuan/quartz-plus.git</a></p><h2>快速上手</h2>
+<h3>部署Quartz任务调度系统</h3>
+<p>调度系统分为前端和后端两个项目，可以分开部署 <strong>quartz-plus-scheduler-center</strong>（调度服务） 和 <strong>quartz-plus-web-console</strong>（前端应用），也可将前端代码打包后的静态资源文件集成到 <code>quartz-plus-scheduler-center</code> 中。</p><p><strong><code>quartz-plus-scheduler-center</code> 默认使用的是H2数据库，生产环境建议使用外部数据库，如 MySQL、PostgreSQL 等。</strong></p><p>系统内置了两个登录用户：</p><blockquote>
+<p>用户1：用户名为 admin，密码为 123456，拥有管理员权限。</p><p>用户2：用户名为 quartz，密码为 123456，仅具有普通用户权限。</p></blockquote>
+<h3>注解式定义Job和Trigger</h3>
+<p>使用 <strong>@QuartzJob</strong> 和 <strong>@QuartzTrigger</strong> 注解快速定义 <code>Job</code>和<code>Trigger</code>：</p><div class="highlight"><pre><span></span><span class="nd">@QuartzJob</span><span class="p">(</span><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;打印 hello world&quot;</span><span class="p">)</span>
+<span class="nd">@QuartzTrigger</span><span class="p">(</span><span class="n">cron</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;0/10 * * * * ?&quot;</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">HelloWorldJob</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">Job</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="n">JobExecutionContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">JobExecutionException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;hello world, current time: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">LocalDateTime</span><span class="p">.</span><span class="na">now</span><span class="p">().</span><span class="na">format</span><span class="p">(</span><span class="n">DateTimeFormatter</span><span class="p">.</span><span class="na">ISO_LOCAL_DATE_TIME</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<h3>SpringBoot应用接入</h3>
+<ol>
+<li>引入最新版本</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="nt">&lt;dependency&gt;</span>
+<span class="w">    </span><span class="nt">&lt;groupId&gt;</span>redcoder<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;artifactId&gt;</span>quartz-plus-core<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;version&gt;</span>${quartzplus.latest.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+<ol start="2">
+<li>在启用类上添加注解 <code>@QuartzJobScan</code>，并指定 job 类所在的包路径。</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="nd">@SpringBootApplication</span>
+<span class="nd">@QuartzJobScan</span><span class="p">(</span><span class="s">&quot;redcoder.quartzplus.demo.job&quot;</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">QuartzPlusDemoApplication</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">SpringApplication</span><span class="p">.</span><span class="na">run</span><span class="p">(</span><span class="n">QuartzPlusDemoApplication</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<ol start="3">
+<li>添加配置，指定注册中心服务地址</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="nt">quartz-job-scheduler</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">registry</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># 调度服务注册地址（替换成你的IP和端口）</span>
+<span class="w">    </span><span class="nt">register-url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://localhost:32007/api/quartz-job-scheduler/instance/register</span>
+<span class="w">    </span><span class="c1"># 调度服务取消注册地址（替换成你的IP和端口）</span>
+<span class="w">    </span><span class="nt">unregister-url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://localhost:32007/api/quartz-job-scheduler/instance/unregister</span>
+</pre></div>
+
+            </div>
+        </article>
+        <div id="ga-tags">
+    
+    <span class="ga-tag">
+        <a class="ga-highlight" href="/tag/Java/">#Java</a>
+    </span>
+    
+    <span class="ga-tag">
+        <a class="ga-highlight" href="/tag/SpringBoot/">#SpringBoot</a>
+    </span>
+    
+</div>
+    </section>
+
+    
+<section id="ga-content_pager">
+
+    <div class="next">
+        <h3>No More</h3>
+        <p class="yue">This is the latest one.</p>
+    </div>
+
+
+    <div class="prev">
+        <h3>No More</h3>
+        <p class="yue">This is the oldest one.</p>
+    </div>
+
+</section>
+
+
+    
+        <script>
+            var initValine = function () {
+                new Valine({"enable": true, "el": "#vcomments", "appId": "IKRAfuPq0zrz6Wfje8ahHAIP-gzGzoHsz", "appKey": "lFaCWkd4xCs0Ng5UWs1eHNwU", "visitor": true, "recordIP": true});
+            }
+        </script>
+        <script defer src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js' onload="initValine()"></script>
+        <div id="vcomments"></div>
+    
+
+</main>
+
+                <footer class="ga-mono" id="ga-footer">
+                    <section>
+                        <span id="ga-uptime"></span>
+                        <span class="brand">Yuan's Blog</span>
+                    </section>
+                    <section>
+                        <p class="copyright">
+                            <span>Copyright © 2025 Yuan</span>
+                            <span>Powered by <a no-style href="https://github.com/AlanDecode/Maverick" target="_blank">Maverick & Galileo</a></span>
+                        </p>
+                        <div class="copyright">
+                            <span class="footer-addon">
+                                
+                            </span>
+                            <nav class="social-links">
+                                <ul><li><a class="no-style" title="Twitter" href="https://twitter.com/AlanDecode" target="_blank"><i class="gi gi-twitter"></i>Twitter</a></li><span class="separator">·</span><li><a class="no-style" title="GitHub" href="https://github.com/AlanDecode" target="_blank"><i class="gi gi-github"></i>GitHub</a></li><span class="separator">·</span><li><a class="no-style" title="Weibo" href="https://weibo.com/5245109677/" target="_blank"><i class="gi gi-weibo"></i>Weibo</a></li></ul>
+                            </nav>
+                        </div>
+                    </section>
+                    <script>
+                        var site_build_date = "2025-03-20T16:00+08:00"
+                    </script>
+                    <script src="/assets/galileo-7c8cea54ab.js"></script>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <!--katex-->
+    <script defer src="/assets/katex.min.js"></script>
+    <script>
+    mathOpts = {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "\\[", right: "\\]", display: true},
+            {left: "$", right: "$", display: false},
+            {left: "\\(", right: "\\)", display: false}
+        ]
+    };
+    </script>
+    <script defer src="/assets/auto-render.min.js" onload="renderMathInElement(document.body, mathOpts);"></script>
+
+    <script src="/assets/ExSearch/jquery.min.js"></script>
+    <script src="/assets/ExSearch/ExSearch-493cb9cd89.js"></script>
+
+    
+    </body>
+</html>
