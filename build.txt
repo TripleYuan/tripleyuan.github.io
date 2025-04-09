@@ -1,0 +1,1 @@
+python mvrk.py --config C:\Users\Administrator\Nutstore\1\Blog\publish\config.py --source_dir C:\Users\Administrator\Nutstore\1\Blog\publish\ --build_dir ./docs/

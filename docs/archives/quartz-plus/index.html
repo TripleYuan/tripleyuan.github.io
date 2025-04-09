@@ -19,7 +19,7 @@
     <script>
         var ExSearchConfig = {
             root: "",
-            api: "/0ec43e294b6d91662c1e37965bfb3c0f.json"
+            api: "/7b39b65d061d13e0739b3dde390807fc.json"
         }
     </script>
     
@@ -83,7 +83,7 @@
             <div class="ga-content_body">
                 <p>在工作中，我经常会使用到 Quartz，一个开源的分布式任务调度框架。然而，尽管 Quartz 提供了强大的功能，我在使用过程中却遇到了一些痛点：</p><ul>
 <li>Quartz 不支持注解的方式定义Job，这导致我们只能通过硬编码的方式创建<code>Job</code>和<code>Trigger</code>，并手动注册到 Quartz scheduler 中。</li>
-<li>​Quartz 未提供任务调度管理界面。在实际工作中，我常常需要手动触发某个Job的执行，然而由于缺少管理页面，我们只能通过修改数据库中 trigger 的执行时间来间接触发 job 的执行，这显然不是一个高效的方式。</li>
+<li>Quartz 未提供任务调度管理界面。在实际工作中，我常常需要手动触发某个Job的执行，然而由于缺少管理页面，我们只能通过修改数据库中 trigger 的执行时间来间接触发 job 的执行，这显然不是一个高效的方式。</li>
 </ul>
 <p>为了解决这些问题，提高开发效率，我基于 Spring 对 Quartz 进行了扩展，开发了一个名为 Quartz Plus 的工具库：</p><ul>
 <li>支持注解的方式快速定义<code>Job</code>和<code>Trigger</code>：使用 @QuartzJob 和 @QuartzTrigger 注解，我们可以快速地定义<code>Job</code>和<code>Trigger</code>，并且它们会自动注册到<code>Quartz Scheduler</code>中。</li>
@@ -93,17 +93,6 @@
 <h3>部署Quartz任务调度系统</h3>
 <p>调度系统分为前端和后端两个项目，可以分开部署 <strong>quartz-plus-scheduler-center</strong>（调度服务） 和 <strong>quartz-plus-web-console</strong>（前端应用），也可将前端代码打包后的静态资源文件集成到 <code>quartz-plus-scheduler-center</code> 中。</p><p><strong><code>quartz-plus-scheduler-center</code> 默认使用的是H2数据库，生产环境建议使用外部数据库，如 MySQL、PostgreSQL 等。</strong></p><p>系统内置了两个登录用户：</p><blockquote>
 <p>用户1：用户名为 admin，密码为 123456，拥有管理员权限。</p><p>用户2：用户名为 quartz，密码为 123456，仅具有普通用户权限。</p></blockquote>
-<h3>注解式定义Job和Trigger</h3>
-<p>使用 <strong>@QuartzJob</strong> 和 <strong>@QuartzTrigger</strong> 注解快速定义 <code>Job</code>和<code>Trigger</code>：</p><div class="highlight"><pre><span></span><span class="nd">@QuartzJob</span><span class="p">(</span><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;打印 hello world&quot;</span><span class="p">)</span>
-<span class="nd">@QuartzTrigger</span><span class="p">(</span><span class="n">cron</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;0/10 * * * * ?&quot;</span><span class="p">)</span>
-<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">HelloWorldJob</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">Job</span><span class="w"> </span><span class="p">{</span>
-
-<span class="w">    </span><span class="nd">@Override</span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="n">JobExecutionContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">JobExecutionException</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;hello world, current time: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">LocalDateTime</span><span class="p">.</span><span class="na">now</span><span class="p">().</span><span class="na">format</span><span class="p">(</span><span class="n">DateTimeFormatter</span><span class="p">.</span><span class="na">ISO_LOCAL_DATE_TIME</span><span class="p">));</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
 <h3>SpringBoot应用接入</h3>
 <ol>
 <li>引入最新版本</li>
@@ -135,6 +124,17 @@
 <span class="w">    </span><span class="nt">register-url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://localhost:32007/api/quartz-job-scheduler/instance/register</span>
 <span class="w">    </span><span class="c1"># 调度服务取消注册地址（替换成你的IP和端口）</span>
 <span class="w">    </span><span class="nt">unregister-url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://localhost:32007/api/quartz-job-scheduler/instance/unregister</span>
+</pre></div>
+<h3>注解式定义Job和Trigger</h3>
+<p>使用 <strong>@QuartzJob</strong> 和 <strong>@QuartzTrigger</strong> 注解快速定义 <code>Job</code>和<code>Trigger</code>：</p><div class="highlight"><pre><span></span><span class="nd">@QuartzJob</span><span class="p">(</span><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;打印 hello world&quot;</span><span class="p">)</span>
+<span class="nd">@QuartzTrigger</span><span class="p">(</span><span class="n">cron</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;0/10 * * * * ?&quot;</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">HelloWorldJob</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">Job</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="n">JobExecutionContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">JobExecutionException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;hello world, current time: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">LocalDateTime</span><span class="p">.</span><span class="na">now</span><span class="p">().</span><span class="na">format</span><span class="p">(</span><span class="n">DateTimeFormatter</span><span class="p">.</span><span class="na">ISO_LOCAL_DATE_TIME</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 
             </div>
