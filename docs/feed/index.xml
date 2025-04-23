@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Yuan's Blog</title><link>/</link><description>Hello, World!</description><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>/android-chrome-512x512.png</url><title>Yuan's Blog</title><link>/</link></image><language>english</language><lastBuildDate>Wed, 09 Apr 2025 17:23:51 +0806</lastBuildDate><pubDate>Wed, 09 Apr 2025 17:23:51 +0806</pubDate><item><title>quartz-plus</title><link>/archives/quartz-plus/</link><description>&lt;p&gt;在工作中，我经常会使用到 Quartz，一个开源的分布式任务调度框架。然而，尽管 Quartz 提供了强大的功能，我在使用过程中却遇到了一些痛点：&lt;/p&gt;&lt;ul&gt;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Yuan's Blog</title><link>/</link><description>Hello, World!</description><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>/android-chrome-512x512.png</url><title>Yuan's Blog</title><link>/</link></image><language>english</language><lastBuildDate>Wed, 23 Apr 2025 10:15:21 +0806</lastBuildDate><pubDate>Wed, 23 Apr 2025 10:15:21 +0806</pubDate><item><title>quartz-plus</title><link>/archives/quartz-plus/</link><description>&lt;p&gt;在工作中，我经常会使用到 Quartz，一个开源的分布式任务调度框架。然而，尽管 Quartz 提供了强大的功能，我在使用过程中却遇到了一些痛点：&lt;/p&gt;&lt;ul&gt;
 &lt;li&gt;Quartz 不支持注解的方式定义Job，这导致我们只能通过硬编码的方式创建&lt;code&gt;Job&lt;/code&gt;和&lt;code&gt;Trigger&lt;/code&gt;，并手动注册到 Quartz scheduler 中。&lt;/li&gt;
 &lt;li&gt;Quartz 未提供任务调度管理界面。在实际工作中，我常常需要手动触发某个Job的执行，然而由于缺少管理页面，我们只能通过修改数据库中 trigger 的执行时间来间接触发 job 的执行，这显然不是一个高效的方式。&lt;/li&gt;
 &lt;/ul&gt;
@@ -54,4 +54,67 @@
 &lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-</description><author>im.wuxiaoyuan@gmail.com (wuxiaoyuan)</author><guid isPermaLink="true">/archives/quartz-plus/</guid><pubDate>Thu, 20 Mar 2025 17:51:02 +0806</pubDate></item><item><title>rc-initializr</title><link>/archives/rc-initializr/</link><description>&lt;p&gt;&lt;a href="https://github.com/spring-io/initializr"&gt;Spring Initializr&lt;/a&gt; 是一个基于Web的工具，可快速创建SpringBoot项目。一些流行的IDE，比如Intellij IDEA，已经集成了Spring Initializr，帮助我们快速创建一个SpirngBoot项目。&lt;/p&gt;&lt;p&gt;官方提供的Spring Initializr生成的SpringBoot项目十分简单，如下所示：&lt;/p&gt;&lt;figure style="flex: 36.59090909090909" &gt;&lt;img loading="lazy" width="483" height="660" src="/archives/assets/4e91fdbca57392e493dc5f06a90202a0.png" /&gt;&lt;/figure&gt;&lt;p&gt;我们在日常开发中，经常需要创建各种项目，而这些项目之间，可能存在大量相同，甚至类似的代码，比如Redis配置类、Quartz配置类、一些常用的工具类等等。为了在创建新的项目时，一并生成这些可重复使用的代码，rc-initializr诞生了，它是基于Spring Initializr定制的项目生成器。&lt;/p&gt;&lt;p&gt;下面以Intellij IDEA为例，演示如何使用rc-initializr创建项目：&lt;/p&gt;&lt;p&gt;(1)  打开Intellij IDEA，进入New Project界面&lt;/p&gt;&lt;figure style="flex: 54.15584415584416" &gt;&lt;img loading="lazy" width="834" height="770" src="/archives/assets/b8a626381cbeaf57abbfd04a5f8386d6.png" /&gt;&lt;figcaption&gt;step1.png&lt;/figcaption&gt;&lt;/figure&gt;&lt;p&gt;修改Service Url为：&lt;a href="http://localhost:8080"&gt;http://localhost:8080&lt;/a&gt; (本地启动的服务地址，根据实际情况填写)&lt;/p&gt;&lt;p&gt;输入项目信息后，点击Next&lt;/p&gt;&lt;p&gt;(2) 选择SpringBoot版本和依赖&lt;/p&gt;&lt;figure style="flex: 54.15584415584416" &gt;&lt;img loading="lazy" width="834" height="770" src="/archives/assets/25abe75add0aa61dfff67ef06b253e66.png" /&gt;&lt;figcaption&gt;step2.png&lt;/figcaption&gt;&lt;/figure&gt;&lt;p&gt;默认添加的依赖：spring-web, spring-data-redis, jedis, quartz, validation, apache-commons-pool, apache-commons-lang3, commons-collections, lombok, spring-data-jpa.&lt;/p&gt;&lt;p&gt;(3) 点击Finish，项目创建成功，目录结构如下&lt;/p&gt;&lt;figure style="flex: 54.15584415584416" &gt;&lt;img loading="lazy" width="834" height="770" src="/archives/assets/25abe75add0aa61dfff67ef06b253e66.png" /&gt;&lt;figcaption&gt;step3.png&lt;/figcaption&gt;&lt;/figure&gt;&lt;p&gt;至此，项目创建完成，包含了我们常用的配置代码、工具类和一些依赖等。&lt;/p&gt;</description><author>im.wuxiaoyuan@gmail.com (wuxiaoyuan)</author><guid isPermaLink="true">/archives/rc-initializr/</guid><pubDate>Thu, 20 Mar 2025 20:19:16 +0806</pubDate></item></channel></rss>
+</description><author>im.wuxiaoyuan@gmail.com (wuxiaoyuan)</author><guid isPermaLink="true">/archives/quartz-plus/</guid><pubDate>Thu, 20 Mar 2025 17:51:02 +0806</pubDate></item><item><title>rc-initializr</title><link>/archives/rc-initializr/</link><description>&lt;p&gt;&lt;a href="https://github.com/spring-io/initializr"&gt;Spring Initializr&lt;/a&gt; 是一个基于Web的工具，可快速创建SpringBoot项目。一些流行的IDE，比如Intellij IDEA，已经集成了Spring Initializr，帮助我们快速创建一个SpirngBoot项目。&lt;/p&gt;&lt;p&gt;官方提供的Spring Initializr生成的SpringBoot项目十分简单，如下所示：&lt;/p&gt;&lt;figure style="flex: 36.59090909090909" &gt;&lt;img loading="lazy" width="483" height="660" src="/archives/assets/4e91fdbca57392e493dc5f06a90202a0.png" /&gt;&lt;/figure&gt;&lt;p&gt;我们在日常开发中，经常需要创建各种项目，而这些项目之间，可能存在大量相同，甚至类似的代码，比如Redis配置类、Quartz配置类、一些常用的工具类等等。为了在创建新的项目时，一并生成这些可重复使用的代码，rc-initializr诞生了，它是基于Spring Initializr定制的项目生成器。&lt;/p&gt;&lt;p&gt;下面以Intellij IDEA为例，演示如何使用rc-initializr创建项目：&lt;/p&gt;&lt;p&gt;(1)  打开Intellij IDEA，进入New Project界面&lt;/p&gt;&lt;figure style="flex: 54.15584415584416" &gt;&lt;img loading="lazy" width="834" height="770" src="/archives/assets/b8a626381cbeaf57abbfd04a5f8386d6.png" /&gt;&lt;figcaption&gt;step1.png&lt;/figcaption&gt;&lt;/figure&gt;&lt;p&gt;修改Service Url为：&lt;a href="http://localhost:8080"&gt;http://localhost:8080&lt;/a&gt; (本地启动的服务地址，根据实际情况填写)&lt;/p&gt;&lt;p&gt;输入项目信息后，点击Next&lt;/p&gt;&lt;p&gt;(2) 选择SpringBoot版本和依赖&lt;/p&gt;&lt;figure style="flex: 54.15584415584416" &gt;&lt;img loading="lazy" width="834" height="770" src="/archives/assets/25abe75add0aa61dfff67ef06b253e66.png" /&gt;&lt;figcaption&gt;step2.png&lt;/figcaption&gt;&lt;/figure&gt;&lt;p&gt;默认添加的依赖：spring-web, spring-data-redis, jedis, quartz, validation, apache-commons-pool, apache-commons-lang3, commons-collections, lombok, spring-data-jpa.&lt;/p&gt;&lt;p&gt;(3) 点击Finish，项目创建成功，目录结构如下&lt;/p&gt;&lt;figure style="flex: 54.15584415584416" &gt;&lt;img loading="lazy" width="834" height="770" src="/archives/assets/25abe75add0aa61dfff67ef06b253e66.png" /&gt;&lt;figcaption&gt;step3.png&lt;/figcaption&gt;&lt;/figure&gt;&lt;p&gt;至此，项目创建完成，包含了我们常用的配置代码、工具类和一些依赖等。&lt;/p&gt;</description><author>im.wuxiaoyuan@gmail.com (wuxiaoyuan)</author><guid isPermaLink="true">/archives/rc-initializr/</guid><pubDate>Thu, 20 Mar 2025 20:19:16 +0806</pubDate></item><item><title>Install pdftotext with Anaconda3</title><link>/archives/install-pdftotext-with-anaconda3/</link><description>&lt;h1&gt;解决Anaconda3依赖安装缓慢难题：pdftotext安装过程全记录&lt;/h1&gt;
+&lt;h2&gt;背景需求&lt;/h2&gt;
+&lt;p&gt;在开发电子书解析工具时，我需要通过Python提取PDF文本内容。&lt;code&gt;pdftotext&lt;/code&gt;作为高效的PDF解析库成为首选，但没想到依赖安装过程如此艰难，竟让我经历了8小时的&amp;quot;渡劫式&amp;quot;安装历程。&lt;/p&gt;&lt;hr /&gt;
+&lt;h2&gt;踩坑全记录&lt;/h2&gt;
+&lt;h3&gt;第一阶段：pip安装遭遇C++环境缺失&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;pip&lt;span class="w"&gt; &lt;/span&gt;install&lt;span class="w"&gt; &lt;/span&gt;pdftotext&lt;span class="w"&gt; &lt;/span&gt;--global-option&lt;span class="o"&gt;=&lt;/span&gt;build_ext...
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;遭遇经典错误提示：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;error: Microsoft Visual C++ 14.0 or greater is required.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;应对方案&lt;/strong&gt;：安装 &lt;a href="https://visualstudio.microsoft.com/visual-cpp-build-tools/"&gt;Microsoft C++ Build Tools&lt;/a&gt; ，公司网络较慢，经过两个小时的漫长等待，终于安装成功了。。&lt;/p&gt;&lt;p&gt;安装完 Build Tools 后，新的拦路虎出现了——&lt;code&gt;poppler-cpp&lt;/code&gt;依赖缺失。&lt;/p&gt;&lt;h3&gt;第二阶段：poppler依赖的死亡循环&lt;/h3&gt;
+&lt;p&gt;通过MSYS2手动安装poppler后，环境变量配置始终不生效：&lt;/p&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$&lt;span class="w"&gt; &lt;/span&gt;pkg-config&lt;span class="w"&gt; &lt;/span&gt;--cflags&lt;span class="w"&gt; &lt;/span&gt;--libs&lt;span class="w"&gt; &lt;/span&gt;poppler-cpp
+Package&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;poppler-cpp&amp;#39;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;not&lt;span class="w"&gt; &lt;/span&gt;found
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;此时陷入依赖迷宫：&lt;/p&gt;&lt;ol&gt;
+&lt;li&gt;手动编译poppler耗时且易出错&lt;/li&gt;
+&lt;li&gt;Windows环境下的路径配置复杂度陡增&lt;/li&gt;
+&lt;li&gt;旧版Anaconda的依赖解析算法存在严重性能问题&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;第三阶段：Anaconda版本的正确抉择&lt;/h3&gt;
+&lt;p&gt;根据大模型建议安装Anaconda3-2020.11版本后，遭遇&lt;strong&gt;依赖解析耗时黑洞&lt;/strong&gt;：&lt;/p&gt;&lt;ul&gt;
+&lt;li&gt;1小时等待无进展&lt;/li&gt;
+&lt;li&gt;手动安装&lt;code&gt;poppler&lt;/code&gt;后仍报相同错误&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;破局关键&lt;/strong&gt;：果断更换最新版Anaconda3-2024.10，并配置国内镜像源：&lt;/p&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;conda&lt;span class="w"&gt; &lt;/span&gt;config&lt;span class="w"&gt; &lt;/span&gt;--add&lt;span class="w"&gt; &lt;/span&gt;channels&lt;span class="w"&gt; &lt;/span&gt;https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
+conda&lt;span class="w"&gt; &lt;/span&gt;config&lt;span class="w"&gt; &lt;/span&gt;--add&lt;span class="w"&gt; &lt;/span&gt;channels&lt;span class="w"&gt; &lt;/span&gt;https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free
+conda&lt;span class="w"&gt; &lt;/span&gt;config&lt;span class="w"&gt; &lt;/span&gt;--add&lt;span class="w"&gt; &lt;/span&gt;channels&lt;span class="w"&gt; &lt;/span&gt;https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge
+&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;最终胜利时刻&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;conda&lt;span class="w"&gt; &lt;/span&gt;install&lt;span class="w"&gt; &lt;/span&gt;pdftotext&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="c1"&gt;# 国内镜像+新版conda=3分钟完成安装&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;hr /&gt;
+&lt;h2&gt;技术要点总结&lt;/h2&gt;
+&lt;h3&gt;1. 环境搭建黄金法则&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;新版工具优先&lt;/strong&gt;：Anaconda2024相较旧版在依赖解析速度上有代际差距&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;镜像源标配化&lt;/strong&gt;：国内镜像速度提升可达10倍（实测下载速度从20KB/s→2MB/s）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;C++环境预装&lt;/strong&gt;：提前安装VC++14+可避免80%的Python包编译错误&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;2. 依赖管理技巧&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;graph LR
+A[安装报错] --&amp;gt; B{检查错误类型}
+B --&amp;gt;|C++相关| C[安装Build Tools]
+B --&amp;gt;|依赖缺失| D[conda优先于pip]
+D --&amp;gt; E[配置镜像源]
+E --&amp;gt; F[新版Anaconda]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;3. pdftotext的局限认知&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;纯文本提取：★★★★☆&lt;/li&gt;
+&lt;li&gt;公式/表格解析：★☆☆☆（转为纯文本后格式丢失）&lt;/li&gt;
+&lt;li&gt;复杂版式处理：建议结合PDFMiner等工具协同工作&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h2&gt;经验升华&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;大模型使用边界&lt;/strong&gt;：AI助手可提供解决思路，但具体路径验证仍需人工判断&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;环境隔离必要性&lt;/strong&gt;：全程在虚拟环境中操作，避免污染系统环境&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;错误日志分析法&lt;/strong&gt;：重点观察&lt;code&gt;error&lt;/code&gt;关键词后的第一段有效信息&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;后记：当看到终端终于出现&lt;code&gt;Successfully installed pdftotext-3.0.0&lt;/code&gt;时，窗外已是华灯初上。这场安装战役教会我的不仅是技术解决之道，更是对工具链生态的深刻理解——在Python的世界里，有时候选对工具版本比写代码更重要。&lt;/p&gt;&lt;/blockquote&gt;
+</description><author>im.wuxiaoyuan@gmail.com (wuxiaoyuan)</author><guid isPermaLink="true">/archives/install-pdftotext-with-anaconda3/</guid><pubDate>Wed, 23 Apr 2025 08:43:15 +0806</pubDate></item></channel></rss>
