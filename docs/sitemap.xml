@@ -12,6 +12,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+    <loc>/archives/high-quality-equals/</loc>
+    <lastmod>2025-06-05</lastmod>
+    <changefreq>always</changefreq>
+    <priority>0.5</priority>
+</url>
+
+<url>
     <loc>/archives/static-factory-method-and-buidler-pattern/</loc>
     <lastmod>2025-05-25</lastmod>
     <changefreq>always</changefreq>
