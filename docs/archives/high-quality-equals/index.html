@@ -1,0 +1,387 @@
+<!DOCTYPE HTML>
+<html lang="english">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Java,SpringBoot,Yuan,Blog" />
+    <meta name="generator" content="Maverick 1.2.1" />
+    <meta name="template" content="Galileo" />
+    <link rel="alternate" type="application/rss+xml" title="Yuan's Blog &raquo; RSS 2.0" href="/feed/index.xml" />
+    <link rel="alternate" type="application/atom+xml" title="Yuan's Blog &raquo; ATOM 1.0" href="/feed/atom/index.xml" />
+    <link rel="stylesheet" href="/assets/galileo-8d8763e752.css">
+    <link rel="stylesheet" href="/assets/ExSearch/ExSearch-182e5a8868.css">
+    <link rel="stylesheet" href="/assets/katex.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700&display=swap">
+    <script>
+        var ExSearchConfig = {
+            root: "",
+            api: "/1bb757dbc328a64129f40dccb7cbd2e6.json"
+        }
+    </script>
+    
+<title>How to write high-quality equals methods - Yuan's Blog</title>
+<meta name="author" content="wuxiaoyuan" />
+<meta name="description" content="本文深入探讨了何时以及如何正确重写 Java 中的 equals 方法，详细解读了其通用约定，并提供了避免常见陷阱的实用技巧和代码示例。" />
+<meta property="og:title" content="How to write high-quality equals methods - Yuan's Blog" />
+<meta property="og:description" content="本文深入探讨了何时以及如何正确重写 Java 中的 equals 方法，详细解读了其通用约定，并提供了避免常见陷阱的实用技巧和代码示例。" />
+<meta property="og:site_name" content="Yuan's Blog" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/archives/high-quality-equals/" />
+<meta property="og:image" content="" />
+<meta property="article:published_time" content="2025-06-05T21:34:50+08.00" />
+<meta name="twitter:title" content="How to write high-quality equals methods - Yuan's Blog" />
+<meta name="twitter:description" content="本文深入探讨了何时以及如何正确重写 Java 中的 equals 方法，详细解读了其通用约定，并提供了避免常见陷阱的实用技巧和代码示例。" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:image" content="" />
+
+
+    
+    </head>
+    
+    <body>
+        
+        <div class="container">
+            <header id="ga-header">
+                <div first>
+                    <aside id="ga-brand">
+                        <h1 class="brand"><a class="no-style" href="/">Yuan's Blog</a></h1>
+                        <p>Hello, World!</p>
+                    </aside>
+                </div>
+                <div second id="ga-nav">
+                    <nav class="navs">
+                        <ul><li><a class="ga-highlight" href="/" target="_self">Home</a></li><span class="separator">·</span><li><a class="ga-highlight" href="/archives/" target="_self">Archives</a></li><span class="separator">·</span><li><a class="ga-highlight" href="/about/" target="_self">About</a></li><span class="separator">·</span><li><a href="#" target="_self" class="search-form-input ga-highlight">Search</a></li></ul>
+                    </nav>
+                </div>
+            </header>
+            <div class="wrapper">
+                
+<main>    
+    <section class="ga-section ga-content">
+        <article class="yue">
+            <h1 class="ga-post_title">How to write high-quality equals methods</h1>
+            <span class="ga-post_meta ga-mono">
+                <span>wuxiaoyuan</span>
+                <time>
+                    2025-06-05
+                </time>
+                
+                in <a no-style class="category" href="/category/Programming/">
+                    Programming
+                </a>
+                
+                
+                <span class="leancloud_visitors" 
+                    id="/archives/high-quality-equals/" 
+                    data-flag-title="How to write high-quality equals methods"> · <i class="leancloud-visitors-count"></i> Views</span>
+                
+            </span>
+            <div class="ga-content_body">
+                <h1>如何编写高质量的equals方法</h1>
+<p>Java类的equals方法用于判断两个对象实例是否相等，重写equals方法看似简单，但实则暗藏玄机，稍不注意便会酿成大错。</p><p>Object类的equals方法实现非常简单，它仅仅比较两个对象的引用是否指向同一个内存地址。也就是说，默认情况下，只有当两个对象是同一个实例时，equals方法才会返回true。</p><p>在实际应用中，默认实现一般不满足我们的需求，需要重写equals方法。但也存在一些例外情况，默认实现已经能满足相等性比较需求了，不需要进行重写，这些例外情况包括：</p><ul>
+<li><p>类的每个实例本质上都是唯一的。比如<code>Thread</code>类，每个线程实例都是独一无二的，Object的equals方法实现对于这些类来说完全够用。</p></li>
+<li><p>类不需要提供“逻辑相等”功能。例如，<code>java.util.regex.Pattern</code> 本可以覆盖 equals 来检查两个 Pattern 实例是否代表完全相同的正则表达式，但设计者认为客户端不需要或不想要此功能。在这种情况下，从 Object 继承的 equals 实现足够用了。</p></li>
+<li><p>超类已经重写了equals方法，并且超类的行为对于该子类也是合适的。例如大多数的<code>Set</code>实现类都继承了<code>AbstractSet</code>的equals实现，<code>AbstractList</code> 和 <code>AbstractMap</code> 也类似，大多数子类都继承了它们各自的equals方法。</p></li>
+<li><p>类是私有的或包级私有的，并且你确信其equals方法永远不会被调用。如果你担心意外发生，可以重写equals方法，让其抛出异常以防止意外地调用。</p><div class="highlight"><pre><span></span><span class="nd">@Override</span><span class="w"> </span>
+<span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">equals</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">o</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">AssertionError</span><span class="p">();</span><span class="w"> </span><span class="c1">// equals方法永远不应被调用</span>
+<span class="w">  </span><span class="p">}</span>
+</pre></div>
+</li>
+</ul>
+<p>那么，什么情况下应该重写equals呢？当类需要提供“逻辑相等”概念，而超类尚未重写equals以实现此行为时，不要犹豫赶紧重写。通常值类（<strong>value class</strong>）需要重写equals方法，比如像<code>Integer</code>、<code>Long</code>、<code>String</code>，当比较这些类的实例时，我们想知道其表示的值或字符串是否相等，而不是它们是否指向同一个对象。另外，如果类实例可以作为Map的键（key）或Set的元素时，也要重写equals方法，以确保程序行为可预测且符合预期。</p><h2>equals方法的通用约定</h2>
+<p>重写equals方法时，必须遵守Object中描述的通用约定，包括自反性、对称性、传递性、一致性和非空性。</p><h3>自反性</h3>
+<p>对于任何非空的引用值<code>x</code>，<code>x.equals(x)</code> 必须返回true。这意味着一个对象必须等于它自己。</p><h3>对称性</h3>
+<p>对于任何非空的引用值 <code>x</code> 和 <code>y</code> ，当且仅当 <code>x.equals(y)</code> 返回true时，<code>y.equals(x)</code> 也必须返回true。</p><p>要实现对称性看似容易，但稍不留神就可能违反此约定。</p><p>下面是一个表示不区分字符串大小写的类：</p><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">CaseInsensitiveString</span><span class="w"> </span><span class="p">{</span><span class="w"> </span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">CaseInsensitiveString</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Objects</span><span class="w"> </span><span class="p">.</span><span class="na">requireNonNull</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 错误示范 - 违反了对称性!</span>
+<span class="w">    </span><span class="nd">@Override</span><span class="w"> </span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">equals</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">o</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">o</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">CaseInsensitiveString</span><span class="p">)</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="p">.</span><span class="na">equals</span><span class="w"> </span><span class="n">IgnoreCase</span><span class="p">(((</span><span class="n">CaseInsensitiveString</span><span class="p">)</span><span class="w"> </span><span class="n">o</span><span class="p">).</span><span class="na">s</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">o</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">String</span><span class="p">)</span><span class="w"> </span><span class="c1">// 单向互操作!</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">equalsIgnoreCase</span><span class="p">((</span><span class="n">String</span><span class="p">)</span><span class="w"> </span><span class="n">o</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span><span class="w"> </span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// ... 其余部分省略</span>
+<span class="p">}</span>
+</pre></div>
+<p>现在让我们创建一个<code>CaseInsensitiveString</code>实例和一个普通字符串实例：</p><div class="highlight"><pre><span></span><span class="n">CaseInsensitiveString</span><span class="w"> </span><span class="n">cis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CaseInsensitiveString</span><span class="p">(</span><span class="s">&quot;Tomcat&quot;</span><span class="p">);</span><span class="w"> </span>
+<span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;tomcat&quot;</span><span class="p">;</span>
+</pre></div>
+<p>当执行 <code>cis.equals(s)</code> 时，结果返回true，但是 <code>s.equals(cis)</code> 却返回false，因为<code>String</code> 类不认识<code>CaseInsensitiveString</code>，这明显违反了对称性约定。</p><p>要修复此问题，只需从 equals 方法中删除与 String 互操作的错误尝试：</p><div class="highlight"><pre><span></span><span class="nd">@Override</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">equals</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">o</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">o</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">CaseInsensitiveString</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+<span class="w">            </span><span class="p">((</span><span class="n">CaseInsensitiveString</span><span class="p">)</span><span class="w"> </span><span class="n">o</span><span class="p">).</span><span class="na">s</span><span class="p">.</span><span class="na">equalsIgnoreCase</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+<h3>传递性</h3>
+<p>对于任何非空的引用值 <code>x</code> ,<code>y</code> 和 <code>z</code> ，如果 <code>x.equals(y)</code> 返回true且 <code>y.equals(z)</code> 返回true时，那么 x.equals(z) 也必须返回true。</p><p>在实践中，我们自己实现equals方法时很容易违反这一条约定。</p><p>下面是一个表示不可变二维整数点的类：</p><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Point</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">Point</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Override</span><span class="w"> </span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">equals</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">o</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">o</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">Point</span><span class="p">))</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">        </span><span class="n">Point</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Point</span><span class="p">)</span><span class="n">o</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="na">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="na">y</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// ... 其余部分省略</span>
+<span class="p">}</span>
+</pre></div>
+<p>假设我们想扩展Point，增加颜色属性：</p><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ColorPoint</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Color</span><span class="w"> </span><span class="n">color</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">ColorPoint</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">Color</span><span class="w"> </span><span class="n">color</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">super</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">);</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">color</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// ... 其余部分省略</span>
+<span class="p">}</span>
+</pre></div>
+<p>此时应该如何编写equals方法？如果忽略颜色属性，直接使用继承的equals方法，虽然并不违反equals约定，但显然这个结果也不是我们想要的。一种可能的equals写法是，仅当参数是另一个具有相同颜色和位置的<code>ColorPoint</code>时才返回true：</p><div class="highlight"><pre><span></span><span class="nd">@Override</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">equals</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">o</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">o</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">ColorPoint</span><span class="p">))</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kd">super</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">((</span><span class="n">ColorPoint</span><span class="p">)</span><span class="w"> </span><span class="n">o</span><span class="p">).</span><span class="na">color</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">color</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+<p>该实现的问题在于<code>Point</code>和<code>ColorPoint</code>的比较结果不同，前者会忽略颜色，而后者总是返回false（因为类型不匹配），具体来说：</p><div class="highlight"><pre><span></span><span class="n">Point</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Point</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+<span class="n">ColorPoint</span><span class="w"> </span><span class="n">cp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ColorPoint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">Color</span><span class="p">.</span><span class="na">RED</span><span class="p">);</span>
+</pre></div>
+<p><code>p.equals(cp)</code> 会返回true，而 <code>cp.equals(p)</code> 却是返回false，很明显，这违反了对称性。</p><p>为了解决此问题，一种可能的做法是，当混合比较时，忽略颜色属性：</p><div class="highlight"><pre><span></span><span class="nd">@Override</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">equals</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">o</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">o</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">Point</span><span class="p">))</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 如果 o 是一个普通的 Point，进行不区分颜色的比较</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">o</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">ColorPoint</span><span class="p">))</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="k">this</span><span class="p">);</span><span class="w"> </span><span class="c1">// 注意这里调用的是 Point 的 equals</span>
+
+<span class="w">    </span><span class="c1">// o 是一个 ColorPoint；进行完整比较</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kd">super</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">((</span><span class="n">ColorPoint</span><span class="p">)</span><span class="w"> </span><span class="n">o</span><span class="p">).</span><span class="na">color</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">color</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+<p>遗憾的是，虽然这样做实现了对称性，但却违反了传递性！</p><div class="highlight"><pre><span></span><span class="n">ColorPoint</span><span class="w"> </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ColorPoint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">Color</span><span class="p">.</span><span class="na">RED</span><span class="p">);</span>
+<span class="n">Point</span><span class="w"> </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Point</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+<span class="n">ColorPoint</span><span class="w"> </span><span class="n">p3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ColorPoint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">Color</span><span class="p">.</span><span class="na">BLUE</span><span class="p">);</span>
+</pre></div>
+<p>现在 <code>p1.equals(p2)</code> (调用 <code>ColorPoint.equals(Point)</code>，忽略颜色) 和 <code>p2.equals(p3)</code> (调用 <code>Point.equals(ColorPoint))</code> 都返回 true，而 <code>p1.equals(p3)</code> (调用 <code>ColorPoint.equals(ColorPoint)</code>，比较颜色) 返回 false，这明显违反了传递性。</p><p><strong>那么解决方案是什么呢？</strong> 事实证明，这是面向对象语言中等价关系的一个基本问题。没有办法在扩展一个可实例化的类并添加值组件的同时保留 equals 约定，除非你愿意放弃面向对象抽象的好处。</p><p>有人提出使用 <code>getClass</code> 代替 <code>instanceof</code> 检查，这样既保留了equals约定，又能在扩展可实例化类时添加值组件：</p><div class="highlight"><pre><span></span><span class="c1">// 错误！违反了里氏替换原则</span>
+<span class="nd">@Override</span><span class="w"> </span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">equals</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">o</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">o</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="na">getClass</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">getClass</span><span class="p">())</span><span class="w"> </span><span class="c1">// 使用 getClass</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="n">Point</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Point</span><span class="p">)</span><span class="w"> </span><span class="n">o</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="na">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="na">y</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+<p>这种做法会导致只有相同实现类的对象才会被视为相等，咋一看好像没啥问题，但实际后果完全不可接受：<code>Point</code> 子类的实例仍然是一个 <code>Point</code>，并且它仍然需要像 <code>Point</code> 一样工作，但如果采用这种方法，它就做不到！</p><p>里氏替换原则 (Liskov substitution principle) 指出，一个类型的所有重要属性也应该适用于其所有子类型，因此为该类型编写的任何方法都应该同样适用于其子类型。如果我们使用基于 <code>getClass</code> 的 equals 方法，那么 <code>Point</code> 的子类（例如 <code>CounterPoint</code>，一个简单记录创建实例数量的 <code>Point</code> 子类）将不等于任何 <code>Point</code> 实例，即使它们的坐标相同。这会导致依赖 equals 的集合（如 HashSet）行为不正确。</p><p>虽然没有令人满意的方法来扩展一个可实例化的类并添加值组件，但有一个很好的 <strong>变通方法：遵循“组合优于继承”的建议。</strong> 不要让 <code>ColorPoint</code> 扩展 <code>Point</code>，而是在 <code>ColorPoint</code> 中包含一个私有的 <code>Point</code> 字段，并提供一个公共的视图方法来返回该 <code>Point</code>：</p><div class="highlight"><pre><span></span><span class="c1">// 在不违反 equals 约定的情况下添加值组件</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ColorPoint</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="n">point</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Color</span><span class="w"> </span><span class="n">color</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">ColorPoint</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">Color</span><span class="w"> </span><span class="n">color</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">point</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Point</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">);</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Objects</span><span class="p">.</span><span class="na">requireNonNull</span><span class="p">(</span><span class="n">color</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/**</span>
+<span class="cm">     * 返回此颜色点的点视图。</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="nf">asPoint</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">point</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Override</span><span class="w"> </span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">equals</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">o</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">o</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">ColorPoint</span><span class="p">))</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">        </span><span class="n">ColorPoint</span><span class="w"> </span><span class="n">cp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">ColorPoint</span><span class="p">)</span><span class="w"> </span><span class="n">o</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">cp</span><span class="p">.</span><span class="na">point</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">point</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">cp</span><span class="p">.</span><span class="na">color</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">color</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// ... 其余部分省略</span>
+<span class="p">}</span>
+</pre></div>
+<h3>一致性</h3>
+<p>对于任何非空的引用值 <code>x</code> 和 <code>y</code> ，只要equals比较过程中使用的信息没有被修改，多次调用 <code>x.equals(y)</code> 必须始终返回true或false。</p><p>这意味着如果两个对象相等，它们必须始终相等，除非其中一个（或两个）被修改。换句话说，可变对象在不同时间可能等于不同的对象，而不可变对象则不能。</p><p>不要编写依赖于不可靠资源的 equals 方法。 例如，<code>java.net.URL</code> 的 equals 方法依赖于比较与 URL 关联的主机的 IP 地址。将主机名转换为 IP 地址可能需要网络访问，并且不能保证随时间推移会产生相同的结果。这可能导致 <code>URL</code> 的 equals 方法违反 equals 约定，并在实践中引发问题。equals 方法应该只对内存中的对象执行确定性计算。</p><h3>非空性</h3>
+<p>对于任何非空的引用值<code>x</code>，<code>x.equals(null)</code> 必须返回false。</p><p>equals 方法的通用约定禁止在与 null 比较时抛出 NullPointerException。许多类的 equals 方法通过显式测试 null 来防止这种情况：</p><div class="highlight"><pre><span></span><span class="nd">@Override</span><span class="w"> </span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">equals</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">o</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">o</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span>
+<span class="w">       </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">   </span><span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+<p>该检查是不必要的，equals 方法必须首先将其参数转换为适当的类型才能调用其访问器或访问其字段。在进行强制转换之前，方法必须使用 <code>instanceof</code> 运算符来检查其参数是否为正确的类型：</p><div class="highlight"><pre><span></span><span class="nd">@Override</span><span class="w"> </span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">equals</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">o</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">o</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">MyType</span><span class="p">))</span><span class="w"> </span><span class="c1">// MyType 是你正在定义的类</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="n">MyType</span><span class="w"> </span><span class="n">mt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">MyType</span><span class="p">)</span><span class="w"> </span><span class="n">o</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// ...</span>
+<span class="p">}</span>
+</pre></div>
+<p>如果其第一个操作数为 null，<code>instanceof</code> 运算符会返回 false，而不管第二个操作数中出现什么类型。因此，如果传入 null，类型检查将返回 false，所以你不需要显式的 null 检查。</p><h2>实现高质量equals方法的诀窍</h2>
+<p>综合以上所有内容，这里有一个高质量 <code>equals</code> 方法的实现步骤：</p><ol>
+<li><p><strong>使用 <code>==</code> 运算符检查参数是否是此对象的引用。</strong> 如果是，则返回 <code>true</code>。这只是一种性能优化，但如果比较操作代价高昂时，则值得这样做。</p></li>
+<li><p><strong>使用 <code>instanceof</code> 运算符检查参数是否具有正确的类型。</strong> 如果不是，则返回 <code>false</code>。通常来说，正确的类型是指方法所在类，但有时也可能是此类实现的某个接口（如果该接口改进了 <code>equals</code> 约定，以允许在实现了该接口的不同类之间进行比较，例如集合接口 <code>Set</code>, <code>List</code>, <code>Map</code>）。</p></li>
+<li><p><strong>将参数强制转换为正确的类型。</strong> 由于转换前使用了 <code>instanceof</code> 进行类型检查 ，所以类型转换必定会成功。</p></li>
+<li><p><strong>对于类中的每个“重要”字段，检查参数的该字段是否与此对象的相应字段匹配。</strong> 如果所有这些比较都成功，则返回 <code>true</code>；否则，返回 <code>false</code>。</p><ul>
+<li>对于类型不是 <code>float</code> 或 <code>double</code> 的基本类型字段，使用 <code>==</code> 运算符进行比较。</li>
+<li>对于对象引用字段，递归调用 <code>equals</code> 方法。</li>
+<li>对于 <code>float</code> 字段，使用 <code>Float.compare(float, float)</code> 方法。</li>
+<li>对于 <code>double</code> 字段，使用 <code>Double.compare(double, double)</code> 方法。（<code>float</code> 和 <code>double</code> 字段的特殊处理是由于存在 <code>Float.NaN</code>, <code>-0.0f</code> 以及类似的 <code>double</code> 值）。</li>
+<li>对于数组字段，将这些准则应用于每个元素。如果数组字段中的每个元素都很重要，请使用 <code>Arrays.equals</code> 方法之一。</li>
+<li>某些对象引用字段可能合法地包含 <code>null</code>，为避免 <code>NullPointerException</code> 的可能性，请使用静态方法 <code>Objects.equals(Object, Object)</code> 检查此类字段是否相等。</li>
+</ul>
+</li>
+</ol>
+<p>为了获得最佳性能，应首先比较更有可能不同、比较成本较低或理想情况下两者兼备的字段。不得比较不属于对象逻辑状态的字段（例如用于同步操作的锁字段）。</p><h2>示例：<code>PhoneNumber</code> 类</h2>
+<p>下面是一个简单的 <code>PhoneNumber</code> 类，它展示了一个典型的 <code>equals</code> 方法实现：</p><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">PhoneNumber</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="n">areaCode</span><span class="p">,</span><span class="w"> </span><span class="n">prefix</span><span class="p">,</span><span class="w"> </span><span class="n">lineNum</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">PhoneNumber</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">areaCode</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">prefix</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">lineNum</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">areaCode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rangeCheck</span><span class="p">(</span><span class="n">areaCode</span><span class="p">,</span><span class="w"> </span><span class="mi">999</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;area code&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rangeCheck</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span><span class="w"> </span><span class="mi">999</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;prefix&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">lineNum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rangeCheck</span><span class="p">(</span><span class="n">lineNum</span><span class="p">,</span><span class="w"> </span><span class="mi">9999</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;line num&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="nf">rangeCheck</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">val</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">max</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">arg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">val</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">max</span><span class="p">)</span>
+<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalArgumentException</span><span class="p">(</span><span class="n">arg</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">val</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="kt">short</span><span class="p">)</span><span class="w"> </span><span class="n">val</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Override</span><span class="w"> </span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">equals</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">o</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">o</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">this</span><span class="p">)</span><span class="w"> </span><span class="c1">// 步骤 1</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">o</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">PhoneNumber</span><span class="p">))</span><span class="w"> </span><span class="c1">// 步骤 2</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">        </span><span class="n">PhoneNumber</span><span class="w"> </span><span class="n">pn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">PhoneNumber</span><span class="p">)</span><span class="n">o</span><span class="p">;</span><span class="w"> </span><span class="c1">// 步骤 3</span>
+<span class="w">        </span><span class="c1">// 步骤 4</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">pn</span><span class="p">.</span><span class="na">lineNum</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">lineNum</span>
+<span class="w">            </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">pn</span><span class="p">.</span><span class="na">prefix</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">prefix</span>
+<span class="w">            </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">pn</span><span class="p">.</span><span class="na">areaCode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">areaCode</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// ... hashCode 和其他方法省略</span>
+<span class="p">}</span>
+</pre></div>
+<p>写完 <code>equals</code> 方法后，问自己三个问题：它是否对称？是否具有传递性？是否一致？不能光问，还要编写单元测试来检查。</p><h2>最后几点注意事项</h2>
+<ul>
+<li><p><strong>重写 <code>equals</code> 时必须重写 <code>hashCode</code></strong>。这是 <code>hashCode</code> 的通用约定要求的，否则你的类在与基于哈希的集合（如 <code>HashMap</code> 和 <code>HashSet</code>）一起使用时将无法正常工作。</p></li>
+<li><p><strong>不要试图太聪明。</strong> 如果你只是简单地测试字段的相等性，遵守 <code>equals</code> 约定并不难。如果你在寻找等价性方面过于激进，就很容易陷入麻烦。</p></li>
+<li><p><strong>不要在 <code>equals</code> 声明中用其他类型替换 <code>Object</code>。</strong></p><div class="highlight"><pre><span></span><span class="c1">// 错误示范 - 参数类型必须是 Object!</span>
+<span class="w">  </span><span class="c1">// public boolean equals(MyClass o) { ... }</span>
+</pre></div>
+<p>该写法的问题在于这个方法没有重写 <code>Object.equals</code>（其参数类型是 <code>Object</code>），而是重载了它。即使是除了正常的 <code>equals</code> 方法之外，还提供这样一个“强类型”的 <code>equals</code> 方法也是不可接受的。始终使用 <code>@Override</code> 注解可以防止你犯这个错误：</p><div class="highlight"><pre><span></span><span class="c1">// 仍然是错误的，但编译器会报错</span>
+<span class="w">  </span><span class="c1">// @Override public boolean equals(MyClass o) { ... }</span>
+</pre></div>
+</li>
+<li><p><strong>考虑使用工具库来生成 <code>equals</code> (和 <code>hashCode</code>)。</strong> 像 Google 的 AutoValue 框架或 Lombok 这样的库可以自动为你生成这些方法，减少样板代码和出错的可能性。IDE 通常也提供生成这些方法的功能。</p></li>
+</ul>
+<h2>总结</h2>
+<p>除非必须，否则不要重写 <code>equals</code> 方法：在许多情况下，从 <code>Object</code> 继承的实现正是你想要的。如果你确实重写了 <code>equals</code>，请确保比较类的所有重要字段，并以保留 <code>equals</code> 约定的所有五个条款的方式进行比较。</p>
+            </div>
+        </article>
+        <div id="ga-tags">
+    
+    <span class="ga-tag">
+        <a class="ga-highlight" href="/tag/Java/">#Java</a>
+    </span>
+    
+</div>
+    </section>
+
+    
+<section id="ga-content_pager">
+
+    <div class="next">
+        <h3>No More</h3>
+        <p class="yue">This is the latest one.</p>
+    </div>
+
+
+    <div class="prev">
+        <a class="ga-highlight" href="/archives/static-factory-method-and-buidler-pattern/">Static Factory Method and Builder Pattern</a>
+        <p class="yue">本文将带您深入了解静态工厂方法 (static factory methods) 和构建器模式 (Builder pattern)。</p>
+    </div>
+
+</section>
+
+
+    
+        <script>
+            var initValine = function () {
+                new Valine({"enable": true, "el": "#vcomments", "appId": "2DAwKg9PNoMvTsKPDsHcAJfL-gzGzoHsz", "appKey": "LGqlkaKsRoVWg19PNoW9VdNU", "visitor": true, "recordIP": true});
+            }
+        </script>
+        <script defer src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js' onload="initValine()"></script>
+        <div id="vcomments"></div>
+    
+
+</main>
+
+                <footer class="ga-mono" id="ga-footer">
+                    <section>
+                        <span id="ga-uptime"></span>
+                        <span class="brand">Yuan's Blog</span>
+                    </section>
+                    <section>
+                        <p class="copyright">
+                            <span>Copyright © 2025 Yuan</span>
+                            <span>Powered by <a no-style href="https://github.com/AlanDecode/Maverick" target="_blank">Maverick & Galileo</a></span>
+                        </p>
+                        <div class="copyright">
+                            <span class="footer-addon">
+                                
+                            </span>
+                            <nav class="social-links">
+                                <ul><li><a class="no-style" title="GitHub" href="https://github.com/TripleYuan" target="_blank"><i class="gi gi-github"></i>GitHub</a></li></ul>
+                            </nav>
+                        </div>
+                    </section>
+                    <script>
+                        var site_build_date = "2025-03-20T16:00+08:00"
+                    </script>
+                    <script src="/assets/galileo-7c8cea54ab.js"></script>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <!--katex-->
+    <script defer src="/assets/katex.min.js"></script>
+    <script>
+    mathOpts = {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "\\[", right: "\\]", display: true},
+            {left: "$", right: "$", display: false},
+            {left: "\\(", right: "\\)", display: false}
+        ]
+    };
+    </script>
+    <script defer src="/assets/auto-render.min.js" onload="renderMathInElement(document.body, mathOpts);"></script>
+
+    <script src="/assets/ExSearch/jquery.min.js"></script>
+    <script src="/assets/ExSearch/ExSearch-493cb9cd89.js"></script>
+
+    
+    </body>
+</html>
